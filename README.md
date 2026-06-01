@@ -1,4 +1,4 @@
-# CSPH GPL Tracking System - Workspace
+# CSPH GPL Tracking System
 
 Système de Traçabilité du Gaz Hors Réseau pour la Caisse de Stabilisation des Prix des Hydrocarbures (CSPH).
 
@@ -37,10 +37,130 @@ Système de Traçabilité du Gaz Hors Réseau pour la Caisse de Stabilisation de
 
 That's it! opencode will automatically load:
 - `AGENTS.md` - Project configuration
-- `CONTEXT.md` - Domain language
+- `CONTEXT.md` - Domain language & glossary
 - `.opencode/skills/` - 18 project-specific skills (IoT, RFID, API, dashboard, alerts, security, PDF, eraser)
 - `.agents/skills/` - Global skills (architecture, devops, Playwright, etc.)
 - MCP `eraser` for diagram-as-code
+
+---
+
+## How Our Documentation Works
+
+This project uses a **structured documentation system** designed to function as an **online reference** where anyone can find internal information about the integrated system.
+
+### Entry Point
+
+**[`docs/00-INDEX.md`](docs/00-INDEX.md)** is the single entry point to all documentation. Start here to navigate the entire technical documentation.
+
+### Documentation Architecture
+
+```
+docs/
+├── 00-INDEX.md                 ← Master TOC (start here)
+├── PARTIE_VI.md                ← Main technical document (~3200 lines)
+├── SystemDesignDoc.md          ← Source design document
+├── parties/                    ← Technical deliverables (PARTIEs)
+│   ├── INDEX.md                ← Registry of all PARTIEs
+│   ├── TEMPLATE.md             ← Reusable skeleton
+│   ├── CONVENTIONS.md          ← Rules for creating a PARTIE
+│   └── README.md               ← Overview
+├── adr/                        ← Architecture Decision Records
+│   ├── 0001-use-bun-runtime.md
+│   ├── 0002-hybrid-diagrams-mermaid-eraser.md
+│   └── 0003-gitflow-conventional-commits.md
+├── diagrams/                   ← All system diagrams
+│   ├── INDEX.md                ← Diagram index & selection guide
+│   └── eraser/                 ← eraser.io diagrams + markdown docs
+│       ├── architecture-cloud.eraser + .md
+│       ├── kubernetes-topology.eraser + .md
+│       ├── security-zones.eraser + .md
+│       └── network.eraser + .md
+├── agents/                     ← Agent configuration
+└── superpowers/                ← Specs & implementation plans
+```
+
+### What is a PARTIE?
+
+A **PARTIE** is a major technical deliverable (~500-3000 lines). Each PARTIE covers one complete aspect of the system:
+
+| PARTIE | Title | Status |
+|--------|-------|--------|
+| **VI** | Conception du système (HLD & Backend) | Published |
+| VII | Dimensionnement & Capacity Planning | Planned |
+| VIII | Opérations, Observabilité & SRE | Planned |
+| IX | Déploiement, CI/CD & Migration | Planned |
+| X | Résilience, Reprise après sinistre & Tests | Planned |
+| XI | Conformité, Réglementaire & Audit | Planned |
+| XII | Coûts, TCO & Modèle économique | Planned |
+
+Each PARTIE follows a strict template ([`TEMPLATE.md`](docs/parties/TEMPLATE.md)) with mandatory sections, cross-references, and frontmatter. See [`CONVENTIONS.md`](docs/parties/CONVENTIONS.md) for the full rules.
+
+### Diagram System (Mermaid + eraser.io)
+
+We use a **hybrid diagram strategy** (see [ADR-0002](docs/adr/0002-hybrid-diagrams-mermaid-eraser.md)):
+
+#### Mermaid (inline in PARTIE_VI.md)
+
+14 Mermaid diagrams are embedded directly in `PARTIE_VI.md` sections:
+
+| # | Diagram | Section |
+|---|---------|---------|
+| 1 | HLD 5 layers | §13.1 |
+| 2 | Flux 1 vs Flux 2 | §13.1 |
+| 3 | EMQX Cluster Raft | §14.3.1 |
+| 4 | MQTT Topics hierarchy | §14.2.1 |
+| 5 | Microservices overview | §15.1.3 |
+| 6 | Kafka Bus topology | §15.1.3 |
+| 7 | ER PostgreSQL | §16.4 |
+| 8 | TimescaleDB partitioning | §16.1 |
+| 9 | Fraud detection pipeline | §17.3 |
+| 10 | PKI X.509/mTLS flow | §18.1.2 |
+| 11 | RBAC matrix | §18.2.1 |
+| 12 | Audit hash chain | §18.4.3 |
+| 13 | Delivery sequence (Flux 1) | §17.5 |
+| 14 | Delivery sequence (Flux 2) | §17.5 |
+
+**Rendering**: Mermaid diagrams render automatically in:
+- opencode (inline)
+- GitHub (native)
+- VS Code (with Markdown Preview Mermaid Support extension)
+- Any Mermaid-compatible viewer
+
+#### eraser.io (cloud/K8s/security/network)
+
+4 eraser.io diagrams for complex infrastructure visuals:
+
+| Diagram | File | Documentation |
+|---------|------|---------------|
+| Architecture Cloud 5 layers | [`architecture-cloud.eraser`](docs/diagrams/eraser/architecture-cloud.eraser) | [`architecture-cloud.md`](docs/diagrams/eraser/architecture-cloud.md) |
+| Kubernetes 3 zones HA | [`kubernetes-topology.eraser`](docs/diagrams/eraser/kubernetes-topology.eraser) | [`kubernetes-topology.md`](docs/diagrams/eraser/kubernetes-topology.md) |
+| Security zones ATEX/ADR/mTLS | [`security-zones.eraser`](docs/diagrams/eraser/security-zones.eraser) | [`security-zones.md`](docs/diagrams/eraser/security-zones.md) |
+| Network VPC/subnets | [`network.eraser`](docs/diagrams/eraser/network.eraser) | [`network.md`](docs/diagrams/eraser/network.md) |
+
+**Rendering**: Open `.eraser` files on [app.eraser.io](https://app.eraser.io) or via the MCP eraser plugin configured in `opencode.json`. Each eraser diagram has a companion `.md` file with full description, component tables, and cross-references.
+
+### How to Navigate
+
+1. **General overview** → Start with [`docs/00-INDEX.md`](docs/00-INDEX.md)
+2. **Technical deep-dive** → Read [`docs/PARTIE_VI.md`](docs/PARTIE_VI.md) (HLD, MQTT, Backend, DB, Dashboard, Security)
+3. **Domain language** → Check [`CONTEXT.md`](CONTEXT.md) for glossary
+4. **Decisions** → Browse [`docs/adr/`](docs/adr/) for architectural decisions
+5. **Diagrams** → See [`docs/diagrams/INDEX.md`](docs/diagrams/INDEX.md) for selection guide
+6. **How to contribute** → Read [`CONTRIBUTING.md`](CONTRIBUTING.md)
+
+### Creating Documentation
+
+To add a new PARTIE:
+```bash
+cp docs/parties/TEMPLATE.md docs/parties/PARTIE_VII_dimensionnement.md
+# Follow the template and CONVENTIONS.md rules
+```
+
+To add a new diagram:
+- **Mermaid**: Add inline in the relevant PARTIE section (§N)
+- **eraser.io**: Create `.eraser` file in `docs/diagrams/eraser/` + companion `.md` doc
+
+---
 
 ## Project Structure
 
@@ -48,70 +168,25 @@ That's it! opencode will automatically load:
 workspace/
 ├── AGENTS.md                       # Agent configuration
 ├── CONTEXT.md                      # Domain language & glossary
-├── CONTRIBUTING.md                 # Guide du contributeur
-├── CHANGELOG.md                    # Historique des versions
-├── README.md                       # Ce fichier
+├── CONTRIBUTING.md                 # Contributor guide
+├── CHANGELOG.md                    # Version history
+├── README.md                       # This file
 ├── opencode.json                   # opencode project config
-├── mcp.json                        # MCP server config
 ├── docs/
 │   ├── 00-INDEX.md                 # Master TOC
-│   ├── SystemDesignDoc.md          # Mémoire technique source
-│   ├── PARTIE_VI.md                # HLD & Backend (publiée)
-│   ├── parties/                    # PARTIES futures
-│   │   ├── README.md
-│   │   ├── TEMPLATE.md             # Squelette réutilisable
-│   │   ├── CONVENTIONS.md          # Guide "comment créer une PARTIE"
-│   │   └── INDEX.md                # TOC des PARTIES
+│   ├── SystemDesignDoc.md          # Source design document
+│   ├── PARTIE_VI.md                # HLD & Backend (published, ~3200 lines)
+│   ├── parties/                    # PARTIEs (current + future)
 │   ├── adr/                        # Architecture Decision Records
-│   │   ├── README.md
-│   │   ├── 0001-use-bun-runtime.md
-│   │   ├── 0002-hybrid-diagrams-mermaid-eraser.md
-│   │   └── 0003-gitflow-conventional-commits.md
-│   ├── diagrams/
-│   │   ├── INDEX.md
-│   │   │   └── eraser/                 # 4 diagrammes eraser.io (.eraser) + docs markdown
-│   │   │       ├── architecture-cloud.eraser
-│   │   │       ├── architecture-cloud.md
-│   │   │       ├── kubernetes-topology.eraser
-│   │   │       ├── kubernetes-topology.md
-│   │   │       ├── security-zones.eraser
-│   │   │       ├── security-zones.md
-│   │   │       ├── network.eraser
-│   │   │       └── network.md
-│   ├── agents/                     # Config agent (issues, triage, domain)
+│   ├── diagrams/                   # Diagrams (Mermaid + eraser.io)
+│   ├── agents/                     # Agent config
 │   └── superpowers/                # Specs & plans
-│       ├── specs/                  # Design docs
-│       └── plans/                  # Implementation plans
 ├── .opencode/
 │   └── skills/                     # 18 project-specific skills
-│       ├── iot-development/
-│       ├── node-red-flows/
-│       ├── mqtt-protocol/
-│       ├── hardware-integration/
-│       ├── rfid-pda-traceability/
-│       ├── api-design-ciph/
-│       ├── dashboard-design/
-│       ├── data-validation/
-│       ├── capacity-planning/
-│       ├── alert-system/
-│       ├── security-compliance/
-│       ├── eraser-diagrams/        # eraser.io skill
-│       ├── pdf/
-│       ├── pdf-generator/
-│       ├── html-to-pdf/
-│       ├── markdown-to-pdf/
-│       ├── pdf-form-filler/
-│       └── pdf-review/
-├── .agents/
-│   └── skills/                     # Global skills
-└── .github/                        # GitHub config
-    ├── CODEOWNERS
-    ├── PULL_REQUEST_TEMPLATE.md
-    ├── ISSUE_TEMPLATE/
-    └── workflows/ci.yml
+└── .github/                        # GitHub config (CI, templates)
 ```
 
-## Available Skills (18 project + global)
+## Available Skills
 
 ### IoT & Embedded
 
@@ -161,19 +236,10 @@ workspace/
 | `pdf-form-filler` | Fill PDF AcroForms |
 | `pdf-review` | Validate, QA, accessibility check |
 
-## Documentation
-
-- **Master TOC** : [`docs/00-INDEX.md`](docs/00-INDEX.md) — porte d'entrée unique
-- **Main technical doc** : [`docs/PARTIE_VI.md`](docs/PARTIE_VI.md) — HLD & Backend (~3200 lignes, 15 diagrammes Mermaid inline)
-- **Mémoire technique source** : [`docs/SystemDesignDoc.md`](docs/SystemDesignDoc.md)
-- **ADR** : [`docs/adr/`](docs/adr/) — décisions structurantes
-- **Diagrammes** : [`docs/diagrams/`](docs/diagrams/) — Mermaid inline + eraser.io avec docs markdown
-- **Domain language** : [`CONTEXT.md`](CONTEXT.md)
-
 ## Tech Stack
 
-- **Backend** : [Bun 1.x](https://bun.sh) (TypeScript natif) — voir [ADR-0001](docs/adr/0001-use-bun-runtime.md)
-- **MQTT** : EMQX 5.x (cluster 3 nœuds Raft)
+- **Backend** : [Bun 1.x](https://bun.sh) (TypeScript) — [ADR-0001](docs/adr/0001-use-bun-runtime.md)
+- **MQTT** : EMQX 5.x (3-node Raft cluster)
 - **Event bus** : Apache Kafka
 - **Time-series DB** : TimescaleDB
 - **DB métier** : PostgreSQL 16
@@ -181,9 +247,9 @@ workspace/
 - **API Gateway** : Kong
 - **Load Balancer** : HAProxy
 - **Frontend** : Next.js 14 + TypeScript
-- **Diagrammes** : Mermaid (inline dans PARTIE_VI.md) + eraser.io (techniques avec docs markdown) — voir [ADR-0002](docs/adr/0002-hybrid-diagrams-mermaid-eraser.md)
-- **CI/CD** : GitHub Actions — voir [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
-- **Workflow Git** : Gitflow + Conventional Commits — voir [ADR-0003](docs/adr/0003-gitflow-conventional-commits.md)
+- **Diagrams** : Mermaid (inline) + eraser.io (infrastructure) — [ADR-0002](docs/adr/0002-hybrid-diagrams-mermaid-eraser.md)
+- **CI/CD** : GitHub Actions
+- **Git Workflow** : Gitflow + Conventional Commits — [ADR-0003](docs/adr/0003-gitflow-conventional-commits.md)
 
 ## Usage Examples
 
@@ -203,46 +269,43 @@ opencode
 "Design the /v1/ingest/frame endpoint for sensor data"
 ```
 
-### Creating a New PARTIE
+### Reading the Documentation
 
 ```bash
-# Copier le template
-cp docs/parties/TEMPLATE.md docs/parties/PARTIE_VII_dimensionnement.md
+# Start with the master TOC
+cat docs/00-INDEX.md
 
-# Suivre les conventions
-code docs/parties/CONVENTIONS.md
+# Deep-dive into system design
+cat docs/PARTIE_VI.md
+
+# Check domain glossary
+cat CONTEXT.md
+
+# Browse architecture decisions
+ls docs/adr/
 ```
 
 ### Generating Diagrams
 
 ```bash
-# Mermaid (inline dans PARTIE_VI.md)
-# Le rendu est automatique dans opencode, GitHub, VS Code
+# Mermaid — renders inline in PARTIE_VI.md
+# No command needed, automatic in opencode/GitHub/VS Code
 
-# eraser.io : ouvrir sur https://app.eraser.io
-# ou via MCP configuré dans opencode.json
-# Documentation markdown disponible dans docs/diagrams/eraser/
+# eraser.io — open on https://app.eraser.io
+# Or via MCP configured in opencode.json
+# Markdown docs available in docs/diagrams/eraser/
 ```
 
 ## Issue Tracking
 
 Issues are stored as markdown files in `.scratch/` directory.
 
-### Create an Issue
-
 ```bash
 mkdir -p .scratch/features
-# Créer un fichier .md avec frontmatter (status: needs-triage)
+# Create .md file with frontmatter (status: needs-triage)
 ```
 
-Voir [`docs/agents/issue-tracker.md`](docs/agents/issue-tracker.md) pour le détail.
-
-### Templates GitHub
-
-Si repo GitHub configuré, utiliser :
-- [`.github/ISSUE_TEMPLATE/bug.md`](.github/ISSUE_TEMPLATE/bug.md)
-- [`.github/ISSUE_TEMPLATE/feature.md`](.github/ISSUE_TEMPLATE/feature.md)
-- [`.github/ISSUE_TEMPLATE/doc.md`](.github/ISSUE_TEMPLATE/doc.md)
+See [`docs/agents/issue-tracker.md`](docs/agents/issue-tracker.md) for details.
 
 ## Development Commands
 
@@ -254,11 +317,8 @@ bun test             # Run test suite
 bun run lint         # Linter (eslint)
 bun run typecheck    # TypeScript check
 
-# Diagrams
-# Mermaid
+# Mermaid export
 npx -p @mermaid-js/mermaid-cli mmdc -i diagram.md -o out.svg
-# eraser.io
-# Voir https://app.eraser.io
 
 # CI local
 markdownlint '**/*.md' --ignore node_modules
@@ -267,7 +327,7 @@ lychee --offline docs/...
 
 ## Contributing
 
-Voir [`CONTRIBUTING.md`](CONTRIBUTING.md) pour le workflow complet (Git, commits, PR, ADR, PARTIES).
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full workflow (Git, commits, PR, ADR, PARTIEs).
 
 ## License
 
