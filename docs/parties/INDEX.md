@@ -26,5 +26,5 @@
 ---
 
 > **Pour proposer une nouvelle PARTIE** : créer une issue avec le template `doc.md`
-> (voir [`.github/ISSUE_TEMPLATE/doc.md`](../../.github/ISSUE_TEMPLATE/doc.md))
+> (voir [`.github/ISSUE_TEMPLATE/doc.md`](https://github.com/menoc61/CSPH-doc/blob/master/.github/ISSUE_TEMPLATE/doc.md))
 > et copier [`TEMPLATE.md`](./TEMPLATE.md) comme base.

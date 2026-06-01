@@ -8,11 +8,11 @@
 | Élément | Lien |
 |---------|------|
 | Mémoire technique source | [`SystemDesignDoc.md`](./SystemDesignDoc.md) |
-| Configuration agent (opencode) | [`../AGENTS.md`](../AGENTS.md) |
-| Glossaire domaine | [`../CONTEXT.md`](../CONTEXT.md) |
-| README projet | [`../README.md`](../README.md) |
-| Guide contributeur | [`../CONTRIBUTING.md`](../CONTRIBUTING.md) |
-| Changelog | [`../CHANGELOG.md`](../CHANGELOG.md) |
+| Configuration agent (opencode) | [`AGENTS.md`](https://github.com/menoc61/CSPH-doc/blob/master/AGENTS.md) |
+| Glossaire domaine | [`CONTEXT.md`](https://github.com/menoc61/CSPH-doc/blob/master/CONTEXT.md) |
+| README projet | [`README.md`](https://github.com/menoc61/CSPH-doc/blob/master/README.md) |
+| Guide contributeur | [`CONTRIBUTING.md`](https://github.com/menoc61/CSPH-doc/blob/master/CONTRIBUTING.md) |
+| Changelog | [`CHANGELOG.md`](https://github.com/menoc61/CSPH-doc/blob/master/CHANGELOG.md) |
 
 ## 2. PARTIES du mémoire technique
 
@@ -47,7 +47,7 @@
 ## 5. Skills (opencode)
 
 > Compétences spécialisées chargées par opencode.
-> Liste complète : [`../AGENTS.md`](../AGENTS.md#agent-skills).
+> Liste complète : [`AGENTS.md`](https://github.com/menoc61/CSPH-doc/blob/master/AGENTS.md#agent-skills).
 
 - **17 skills projet** dans `.opencode/skills/` (IoT, RFID, API, dashboard, alertes, sécurité, PDF)
 - **Skills globaux** dans `.agents/skills/` (architecture, devops, Playwright, etc.)
@@ -57,8 +57,8 @@
 
 | Fichier | Rôle |
 |---------|------|
-| [`../opencode.json`](../opencode.json) | Config opencode (skills paths, MCP, permissions) |
-| [`../mcp.json`](../mcp.json) | Config MCP servers (eraser.io) |
+| [`opencode.json`](https://github.com/menoc61/CSPH-doc/blob/master/opencode.json) | Config opencode (skills paths, MCP, permissions) |
+| [`mcp.json`](https://github.com/menoc61/CSPH-doc/blob/master/mcp.json) | Config MCP servers (eraser.io) |
 | [`agents/issue-tracker.md`](./agents/issue-tracker.md) | Convention `.scratch/` pour issues |
 | [`agents/triage-labels.md`](./agents/triage-labels.md) | Labels de triage |
 | [`agents/domain.md`](./agents/domain.md) | Layout docs domaine |
@@ -67,11 +67,11 @@
 
 | Élément | Référence |
 |---------|-----------|
-| Comment contribuer | [`../CONTRIBUTING.md`](../CONTRIBUTING.md) |
+| Comment contribuer | [`CONTRIBUTING.md`](https://github.com/menoc61/CSPH-doc/blob/master/CONTRIBUTING.md) |
 | Comment créer une PARTIE | [`parties/CONVENTIONS.md`](./parties/CONVENTIONS.md) |
 | Squelette PARTIE | [`parties/TEMPLATE.md`](./parties/TEMPLATE.md) |
-| CI GitHub Actions | [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) |
-| Revues obligatoires | [`.github/CODEOWNERS`](../.github/CODEOWNERS) |
+| CI GitHub Actions | [`.github/workflows/ci.yml`](https://github.com/menoc61/CSPH-doc/blob/master/.github/workflows/ci.yml) |
+| Revues obligatoires | [`.github/CODEOWNERS`](https://github.com/menoc61/CSPH-doc/blob/master/.github/CODEOWNERS) |
 
 ## 8. Statut global du projet
 

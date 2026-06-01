@@ -1,0 +1,38 @@
+title: CSPH GPL Tracking System
+description: Documentation technique du système de traçabilité du Gaz Hors Réseau pour la CSPH
+theme: jekyll-theme-cayman
+url: https://menoc61.github.io
+baseurl: /CSPH-doc
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+exclude:
+  - node_modules
+  - .opencode
+  - .agents
+  - .github
+  - .scratch
+  - "*.json"
+  - "*.lock"
+  - CONTRIBUTING.md
+  - CHANGELOG.md
+  - opencode.json
+  - skills-lock.json
+  - .lycheeignore
+
+include:
+  - docs
+
+defaults:
+  - scope:
+      path: "docs"
+    values:
+      layout: "default"
