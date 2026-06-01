@@ -1,0 +1,71 @@
+# CODEOWNERS — Revues obligatoires
+# Chaque ligne : pattern @owner(s)
+# L'ordre compte : le dernier match gagne.
+
+# Owners par défaut pour tout le repo
+*                        @ciph-lead-arch @ciph-lead-dev
+
+# Documentation
+/docs/                   @ciph-lead-doc
+/docs/parties/           @ciph-lead-doc
+/docs/adr/               @ciph-lead-arch
+/docs/diagrams/          @ciph-lead-doc
+/docs/superpowers/       @ciph-lead-arch
+/CONTRIBUTING.md         @ciph-lead-doc
+/CHANGELOG.md            @ciph-lead-dev
+/AGENTS.md               @ciph-lead-arch
+/CONTEXT.md              @ciph-lead-arch
+/README.md               @ciph-lead-doc
+
+# Backend (Bun) — 9 microservices
+/src/backend/            @ciph-lead-backend
+/src/backend/ingestion-camions/    @ciph-lead-iot @ciph-lead-backend
+/src/backend/ingestion-bouteilles/ @ciph-lead-rfid @ciph-lead-backend
+/src/backend/rapprochement/        @ciph-lead-fraud
+/src/backend/alertes/              @ciph-lead-fraud
+/src/backend/auth/                 @ciph-lead-security
+/src/backend/tracking/             @ciph-lead-backend
+/src/backend/rapports/             @ciph-lead-bi
+
+# IoT & embarqué
+/src/iot/                @ciph-lead-iot
+/docs/diagrams/eraser/security-zones.eraser   @ciph-lead-security
+/docs/diagrams/eraser/network.eraser          @ciph-lead-security
+
+# Cloud / K8s
+/src/infra/              @ciph-lead-devops
+/docs/diagrams/eraser/kubernetes-topology.eraser  @ciph-lead-devops
+/docs/diagrams/eraser/architecture-cloud.eraser   @ciph-lead-devops
+
+# Frontend (dashboard)
+/src/frontend/           @ciph-lead-frontend
+/docs/PARTIE_VI.md       @ciph-lead-arch
+/docs/PARTIE_*.md        @ciph-lead-arch
+
+# Skills opencode
+/.opencode/skills/       @ciph-lead-arch
+/.agents/skills/         @ciph-lead-arch
+
+# GitHub config
+/.github/                @ciph-lead-devops
+/.github/workflows/      @ciph-lead-devops
+/.github/CODEOWNERS      @ciph-lead-arch
+
+# Opencode & MCP
+/opencode.json           @ciph-lead-arch
+/mcp.json                @ciph-lead-arch
+
+# Réglementaire & conformité
+**/ATEX*                 @ciph-lead-security @ciph-lead-iot
+**/ADR*                  @ciph-lead-security
+**/conformite*           @ciph-lead-security
+**/audit*                @ciph-lead-security
+**/fraude*               @ciph-lead-fraud
+**/peréquation*          @ciph-lead-bi
+**/reglementaire*        @ciph-lead-security
+
+# Fichiers sensibles (signature obligatoire du CTO)
+/SECURITY.md             @ciph-cto
+/.env*                   @ciph-cto
+/**/secret*              @ciph-cto
+/**/credentials*         @ciph-cto

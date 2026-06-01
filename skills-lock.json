@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "skills": {
+    "aws-diagrams": {
+      "source": "eraserlabs/eraser-io",
+      "sourceType": "github",
+      "skillPath": "skills/aws-diagrams/SKILL.md",
+      "computedHash": "29eb7b57bcaf6dcd5de0ac18c6713b5344065329e267e3f158d0c105f3bfbb65"
+    },
+    "azure-diagrams": {
+      "source": "eraserlabs/eraser-io",
+      "sourceType": "github",
+      "skillPath": "skills/azure-diagrams/SKILL.md",
+      "computedHash": "be2782f621f1cee306819a8ffa331f888f32d4887440c6f8e60f097336f34b3c"
+    },
+    "bicep-diagrams": {
+      "source": "eraserlabs/eraser-io",
+      "sourceType": "github",
+      "skillPath": "skills/bicep-diagrams/SKILL.md",
+      "computedHash": "f2ce1bc30a08fa3bc16788bdfdffb122b99d69eb01cab63a4f87cad99fc29289"
+    },
+    "eraser-diagrams": {
+      "source": "eraserlabs/eraser-io",
+      "sourceType": "github",
+      "skillPath": "skills/eraser-diagrams/SKILL.md",
+      "computedHash": "91b1d3f574d293b3ebef11a7612c55e6382c264047653be35b2773245e1d234c"
+    },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "computedHash": "9e1c8b3103f92fa8092568a44fe64858de7c5c9dc65ce4bea8f168080e889cfd"
+    },
+    "kimi-pdf": {
+      "source": "thvroyal/kimi-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kimi-pdf/SKILL.md",
+      "computedHash": "a9d44cae6aa95c192879522dd3edee1d2e3174d5239d2395208dfcf7c1a6930e"
+    },
+    "pdf-to-docx": {
+      "source": "claude-office-skills/skills",
+      "sourceType": "github",
+      "skillPath": "pdf-to-docx/SKILL.md",
+      "computedHash": "eba1988b444c9b3a9ae7e547f7163706a00ac5c2c297677b9cafaa0b3cf42f4c"
+    },
+    "plantuml-ascii": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "skillPath": "skills/plantuml-ascii/SKILL.md",
+      "computedHash": "2fb2b41487ea6559f4ccf877fe397c87214b35049528685ff1c02bb792b027d1"
+    },
+    "terraform-diagrams": {
+      "source": "eraserlabs/eraser-io",
+      "sourceType": "github",
+      "skillPath": "skills/terraform-diagrams/SKILL.md",
+      "computedHash": "a67e937dd08fa76f876b88064ea5b97de21b4f565602c33c6d9328341aae00db"
+    },
+    "view-pdf": {
+      "source": "anthropics/knowledge-work-plugins",
+      "sourceType": "github",
+      "skillPath": "pdf-viewer/skills/view-pdf/SKILL.md",
+      "computedHash": "3b5f99f6b143eef94df0c20eb98972d2e77f53f4682e308dfe21035771cee3b0"
+    }
+  }
+}

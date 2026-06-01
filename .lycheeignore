@@ -1,0 +1,14 @@
+# .lycheeignore
+# Liens à ignorer pour le link-check
+# (liens morts connus, fragments internes, etc.)
+
+# Liens externes temporaires / flaky
+https://app.eraser.io/.*
+https://github.com/.*/issues/new
+https://www.linkedin.com/.*
+
+# Liens mailto
+mailto:.*
+
+# Ancres GitHub (auto-générées)
+# (déjà gérées par --offline)

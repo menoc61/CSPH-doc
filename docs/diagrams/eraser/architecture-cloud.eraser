@@ -1,0 +1,107 @@
+# Architecture Cloud CSPH — HLD 5 couches
+# Source: docs/PARTIE_VI.md §13
+# ADR lié: docs/adr/0001-use-bun-runtime.md
+#
+# Visualisation sur https://app.eraser.io (File > New > Architecture Diagram)
+# ou via MCP `eraser` configuré dans opencode.json
+
+title: CSPH GPL Tracking — Architecture 5 couches
+
+colorMode bold
+typeface clean
+
+# ─── COUCHE 1 : ACQUISITION (TERRAIN) ──────────────────────────────
+Couche 1 - Acquisition [icon: aws-iot, color: orange] {
+  Flux 1 - Camions citernes [icon: truck, color: orange] {
+    ADAM-6717 [icon: hardware, color: orange]
+    Capteur Hall [icon: sensor, color: orange]
+    Module GPS [icon: location, color: orange]
+    Teltonika RUT241 [icon: router, color: orange]
+    Batterie LiFePO4 [icon: battery, color: orange]
+  }
+  Flux 2 - Bouteilles 50kg [icon: package, color: orange] {
+    Tag RFID UHF [icon: tag, color: orange]
+    Terminal PDA [icon: mobile, color: orange]
+  }
+}
+
+# ─── COUCHE 2 : TRANSPORT ──────────────────────────────────────────
+Couche 2 - Transport [icon: network, color: blue] {
+  Reseau 4G LTE [icon: cellular, color: blue]
+  Satellite Iridium [icon: satellite, color: blue]
+  EMQX Cluster [icon: mqtt, color: blue] {
+    EMQX Node 1 [icon: server, color: blue]
+    EMQX Node 2 [icon: server, color: blue]
+    EMQX Node 3 [icon: server, color: blue]
+  }
+  Apache Kafka [icon: kafka, color: blue] {
+    Kafka Broker 1 [icon: server, color: blue]
+    Kafka Broker 2 [icon: server, color: blue]
+    Kafka Broker 3 [icon: server, color: blue]
+  }
+}
+
+# ─── COUCHE 3 : TRAITEMENT ─────────────────────────────────────────
+Couche 3 - Traitement [icon: lambda, color: purple] {
+  HAProxy LB [icon: load-balancer, color: purple]
+  Kong API Gateway [icon: api-gateway, color: purple]
+  Microservices Bun [icon: container, color: purple] {
+    svc-auth [icon: lock, color: purple]
+    svc-ingestion-camions [icon: ingest, color: purple]
+    svc-ingestion-bouteilles [icon: ingest, color: purple]
+    svc-tracking [icon: map, color: purple]
+    svc-rapprochement [icon: merge, color: purple]
+    svc-alertes [icon: alert, color: purple]
+    svc-rapports [icon: report, color: purple]
+    svc-admin [icon: settings, color: purple]
+  }
+}
+
+# ─── COUCHE 4 : STOCKAGE ───────────────────────────────────────────
+Couche 4 - Stockage [icon: database, color: green] {
+  TimescaleDB [icon: timescaledb, color: green]
+  PostgreSQL 16 [icon: postgres, color: green]
+  Redis Cluster [icon: redis, color: green]
+  MinIO S3 [icon: s3, color: green]
+  HashiCorp Vault [icon: vault, color: green]
+}
+
+# ─── COUCHE 5 : PRESENTATION ───────────────────────────────────────
+Couche 5 - Presentation [icon: user, color: red] {
+  Dashboard Web CSPH [icon: web, color: red]
+  Dashboard Marketer [icon: web, color: red]
+  App Mobile Chauffeur [icon: mobile, color: red]
+  App Mobile Auditeur CSPH [icon: mobile, color: red]
+}
+
+# ─── CONNEXIONS ───────────────────────────────────────────────────
+ADAM-6717 > EMQX Node 1: MQTT/TLS [color: blue]
+ADAM-6717 > Reseau 4G LTE: 4G/LTE [color: blue]
+Reseau 4G LTE > Satellite Iridium: fallback [color: blue, connection: --]
+EMQX Node 1 > Kafka Broker 1: bridge [color: blue]
+Terminal PDA > Kong API Gateway: HTTPS REST [color: blue]
+
+HAProxy LB > Kong API Gateway: TLS [color: purple]
+Kong API Gateway > Microservices Bun: routes [color: purple]
+
+Microservices Bun > TimescaleDB: time-series [color: green]
+Microservices Bun > PostgreSQL 16: metier [color: green]
+Microservices Bun > Redis Cluster: cache [color: green]
+Microservices Bun > MinIO S3: archives [color: green]
+Microservices Bun > HashiCorp Vault: secrets [color: green]
+
+PostgreSQL 16 > Dashboard Web CSPH: SQL [color: red]
+TimescaleDB > Dashboard Web CSPH: SQL [color: red]
+PostgreSQL 16 > Dashboard Marketer: SQL [color: red]
+
+# ─── LEGEND ────────────────────────────────────────────────────────
+legend [position: bottom-right] {
+  [connection: >, color: blue, label: Flux MQTT/Kafka]
+  [connection: >, color: purple, label: Flux API Gateway]
+  [connection: >, color: green, label: Flux SQL]
+  [connection: >, color: red, label: Flux utilisateur]
+  [connection: --, color: blue, label: Fallback reseau]
+  [icon: hardware, label: Equipement terrain]
+  [icon: server, label: Service cloud]
+  [icon: database, label: Stockage]
+}

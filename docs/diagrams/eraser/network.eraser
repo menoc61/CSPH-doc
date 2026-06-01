@@ -1,0 +1,121 @@
+# Architecture Réseau CSPH — DMZ, sous-réseaux, flux
+# Source: docs/PARTIE_VI.md §15 (Backend) et §18 (Sécurité)
+# ADR lié: docs/adr/0001-use-bun-runtime.md
+#
+# Architecture réseau multi-VPC, isolation par sous-réseaux, flux chiffrés
+
+title: Architecture reseau CSPH - VPC, sous-reseaux, flux
+
+colorMode bold
+typeface clean
+
+# ─── INTERNET ─────────────────────────────────────────────────────
+Internet [icon: globe, color: gray]
+
+# ─── VPN SITE-TO-SITE ────────────────────────────────────────────
+VPN CSPH S2S [icon: vpn, color: blue]
+VPN DTI S2S [icon: vpn, color: blue]
+
+# ─── VPC PRINCIPAL — Cloud CSPH ──────────────────────────────────
+VPC Principal 10.0.0.0/16 [icon: vpc, color: blue] {
+  Subnet Public 10.0.1.0/24 [icon: subnet, color: blue] {
+    NAT Gateway [icon: nat, color: blue]
+    Bastion Host [icon: terminal, color: blue]
+  }
+  Subnet DMZ 10.0.2.0/24 [icon: subnet, color: blue] {
+    HAProxy L4 [icon: load-balancer, color: blue]
+    Kong API Gateway [icon: api-gateway, color: blue]
+    WAF [icon: firewall, color: blue]
+  }
+  Subnet MQTT Privé 10.0.10.0/24 [icon: subnet, color: blue] {
+    EMQX Cluster [icon: mqtt, color: blue] {
+      EMQX Node 1 [icon: server, color: blue]
+      EMQX Node 2 [icon: server, color: blue]
+      EMQX Node 3 [icon: server, color: blue]
+    }
+  }
+  Subnet Services 10.0.20.0/24 [icon: subnet, color: blue] {
+    Service Mesh [icon: mesh, color: blue] {
+    svc-auth [icon: lock, color: blue]
+    svc-ingestion-camions [icon: ingest, color: blue]
+    svc-ingestion-bouteilles [icon: ingest, color: blue]
+    svc-rapprochement [icon: merge, color: blue]
+    svc-alertes [icon: alert, color: blue]
+    svc-tracking [icon: map, color: blue]
+    svc-rapports [icon: report, color: blue]
+    svc-admin [icon: settings, color: blue]
+    }
+  }
+  Subnet Donnees 10.0.30.0/24 [icon: subnet, color: blue] {
+    PostgreSQL Primary [icon: postgres, color: blue]
+    PostgreSQL Replica [icon: postgres, color: blue]
+    TimescaleDB Primary [icon: timescaledb, color: blue]
+    TimescaleDB Replica [icon: timescaledb, color: blue]
+    Redis Master [icon: redis, color: blue]
+    Redis Replica [icon: redis, color: blue]
+    MinIO S3 [icon: s3, color: blue]
+  }
+  Subnet Sécurité 10.0.40.0/24 [icon: subnet, color: blue] {
+    HashiCorp Vault [icon: vault, color: blue]
+    PKI Engine [icon: certificate, color: blue]
+    HSM [icon: key, color: blue]
+    SIEM [icon: dashboard, color: blue]
+  }
+  Subnet Observabilité 10.0.50.0/24 [icon: subnet, color: blue] {
+    Prometheus [icon: prometheus, color: blue]
+    Grafana [icon: grafana, color: blue]
+    Loki [icon: loki, color: blue]
+    OpenTelemetry Collector [icon: otel, color: blue]
+  }
+}
+
+# ─── VPC DR (disaster recovery) ─────────────────────────────────
+VPC DR 10.1.0.0/16 [icon: vpc, color: orange] {
+  Subnet DR 10.1.30.0/24 [icon: subnet, color: orange] {
+    PostgreSQL Standby [icon: postgres, color: orange]
+    MinIO S3 Replica [icon: s3, color: orange]
+  }
+}
+
+# ─── CONNEXIONS ─────────────────────────────────────────────────
+Internet > HAProxy L4: TCP 443 [color: gray]
+Internet > Kong API Gateway: HTTPS [color: gray]
+Internet > WAF: HTTP/HTTPS [color: gray]
+
+HAProxy L4 > EMQX Cluster: MQTTS 8883 [color: blue]
+Kong API Gateway > Service Mesh: HTTPS 8000-8100 [color: blue]
+
+svc-ingestion-camions > EMQX Cluster: subscribe csph.sensor.frames [color: blue]
+svc-ingestion-bouteilles > PostgreSQL Primary: SQL 5432 [color: blue]
+svc-rapprochement > TimescaleDB Primary: SQL 5432 [color: blue]
+svc-tracking > TimescaleDB Primary: SQL 5432 [color: blue]
+svc-rapports > PostgreSQL Primary: SQL 5432 [color: blue]
+
+PostgreSQL Primary > PostgreSQL Replica: streaming 5432 [color: blue]
+TimescaleDB Primary > TimescaleDB Replica: streaming 5432 [color: blue]
+Redis Master > Redis Replica: replication 6379 [color: blue]
+
+Service Mesh > HashiCorp Vault: HTTPS 8200 [color: blue]
+EMQX Cluster > PKI Engine: mTLS verify [color: blue]
+Service Mesh > OpenTelemetry Collector: OTLP 4317 [color: blue]
+OpenTelemetry Collector > Prometheus, Grafana, Loki: telemetry [color: blue]
+
+PostgreSQL Primary > PostgreSQL Standby: WAL streaming [color: orange]
+MinIO S3 > MinIO S3 Replica: async replication [color: orange]
+
+# VPN
+VPN CSPH S2S > Bastion Host: tunnel IPsec [color: blue]
+VPN DTI S2S > Bastion Host: tunnel IPsec [color: blue]
+
+# ─── LEGEND ────────────────────────────────────────────────────────
+legend [position: bottom-left] {
+  [color: gray, label: Internet / WAN]
+  [color: blue, label: VPC Principal 10.0.0.0/16]
+  [color: orange, label: VPC DR 10.1.0.0/16 (autre region)]
+  [icon: subnet, label: Sous-reseau prive]
+  [icon: server, label: Service applicatif]
+  [icon: database, label: Base de donnees]
+  [icon: certificate, label: PKI / mTLS endpoint]
+  [connection: >, color: blue, label: Flux applicatif (chiffre TLS 1.3)]
+  [connection: >, color: orange, label: Flux DR (replication asynchrone)]
+}

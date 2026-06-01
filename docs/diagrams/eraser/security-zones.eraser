@@ -1,0 +1,104 @@
+# Zones de sécurité CSPH — Périmètre ATEX / ADR / mTLS
+# Source: docs/PARTIE_VI.md §18 (sécurité)
+# ADR lié: docs/adr/0001-use-bun-runtime.md
+#
+# Conformité ATEX (zones explosives GPL) + ADR (transport matières dangereuses)
+# + mTLS pour authentification devices (X.509)
+
+title: Perimetre securite CSPH - ATEX, ADR, mTLS
+
+colorMode bold
+typeface clean
+
+# ─── ZONE PHYSIQUE TERRAIN ────────────────────────────────────────
+Terrain - Camion citerne [icon: truck, color: orange] {
+  Zone ATEX 0 [icon: warning, color: red] {
+    Citerne GPL [icon: container, color: red]
+    Vannes et raccords [icon: valve, color: red]
+  }
+  Zone ATEX 1 [icon: warning, color: orange] {
+    Zone immediate citerne [icon: hazard, color: orange]
+    Event et soupapes [icon: valve, color: orange]
+  }
+  Zone ATEX 2 [icon: warning, color: yellow] {
+    Pourtour citerne [icon: hazard, color: yellow]
+  }
+  Zone Sure [icon: shield, color: green] {
+    Boitier IoT [icon: hardware, color: green]
+    ADAM-6717 [icon: hardware, color: green]
+    Capteur Hall [icon: sensor, color: green]
+    Module GPS [icon: location, color: green]
+  }
+}
+
+# ─── ZONE TRANSPORT RESEAU ────────────────────────────────────────
+Transport Reseau [icon: network, color: blue] {
+  Lien 4G LTE [icon: cellular, color: blue]
+  Lien Satellite [icon: satellite, color: blue]
+  VPN MPLS [icon: vpn, color: blue]
+}
+
+# ─── DMZ ──────────────────────────────────────────────────────────
+DMZ [icon: shield, color: gray] {
+  HAProxy L4 [icon: load-balancer, color: gray]
+  Kong API Gateway [icon: api-gateway, color: gray]
+  WAF [icon: firewall, color: gray]
+  Bastion SSH [icon: lock, color: gray]
+}
+
+# ─── RESEAU INTERNE (mtls only) ───────────────────────────────────
+Reseau Interne - mTLS only [icon: lock, color: purple] {
+  Cluster EMQX [icon: mqtt, color: purple] {
+    Node 1 [icon: server, color: purple]
+    Node 2 [icon: server, color: purple]
+    Node 3 [icon: server, color: purple]
+  }
+  Services Backend [icon: container, color: purple]
+  Bases de Donnees [icon: database, color: purple] {
+    PostgreSQL [icon: postgres, color: purple]
+    TimescaleDB [icon: timescaledb, color: purple]
+    Redis [icon: redis, color: purple]
+  }
+  HashiCorp Vault [icon: vault, color: purple]
+  PKI Engine [icon: certificate, color: purple]
+  HSM [icon: key, color: purple]
+}
+
+# ─── AUDIT & SIEM ─────────────────────────────────────────────────
+Audit & SIEM [icon: log, color: green] {
+  Audit Log [icon: log, color: green]
+  SIEM [icon: dashboard, color: green]
+  Monitoring [icon: dashboard, color: green]
+  WORM Storage [icon: storage, color: green]
+}
+
+# ─── FLUX mTLS ────────────────────────────────────────────────────
+Boitier IoT > Lien 4G LTE: X.509 client cert [color: blue]
+Lien 4G LTE > HAProxy L4: TLS 1.3 [color: gray]
+HAProxy L4 > Kong API Gateway: TLS [color: gray]
+Kong API Gateway > Cluster EMQX: TLS [color: purple]
+Cluster EMQX > Services Backend: TLS [color: purple]
+Services Backend > Bases de Donnees: TLS [color: purple]
+PKI Engine > Cluster EMQX: cert rotation [color: purple]
+HashiCorp Vault > Services Backend: secrets [color: purple]
+HSM > PKI Engine: cle racine [color: purple]
+
+# Audit & Monitoring
+Services Backend > Audit Log: append-only [color: green]
+Audit Log > WORM Storage: hash chain [color: green]
+Audit Log > SIEM: stream [color: green]
+Bases de Donnees > SIEM: change events [color: green]
+
+# ─── LEGEND ────────────────────────────────────────────────────────
+legend [position: bottom-left] {
+  [color: red, label: Zone ATEX 0 (gaz permanent)]
+  [color: orange, label: Zone ATEX 1 (gaz probable en fonctionnement normal)]
+  [color: yellow, label: Zone ATEX 2 (gaz peu probable)]
+  [color: green, label: Zone sure (electronique non-Atex toleree)]
+  [color: blue, label: Reseau WAN (chiffre)]
+  [color: gray, label: DMZ]
+  [color: purple, label: Reseau interne mTLS only]
+  [color: green, label: Audit & conformite]
+  [icon: certificate, label: Cert X.509 (PKI Vault) - validite 90j, rotation auto J-30]
+  [icon: key, label: Cle HSM (FIPS 140-2 Level 3)]
+}

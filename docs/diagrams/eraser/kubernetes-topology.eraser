@@ -1,0 +1,114 @@
+# Topologie Kubernetes CSPH — 3 zones A/B/C
+# Source: docs/PARTIE_VI.md §13 et §15
+# ADR lié: docs/adr/0003-gitflow-conventional-commits.md
+#
+# Multi-zone K8s pour HA, StatefulSets pour services stateful
+
+title: Cluster Kubernetes CSPH - 3 zones haute disponibilite
+
+colorMode bold
+typeface clean
+
+# ─── EDGE ──────────────────────────────────────────────────────────
+Edge [icon: cloud, color: gray] {
+  Cloudflare WAF [icon: shield, color: gray]
+  CDN Statique [icon: cdn, color: gray]
+  DDoS Protection [icon: shield, color: gray]
+}
+
+# ─── ZONE A ────────────────────────────────────────────────────────
+Zone A - Primaire [icon: region, color: blue] {
+  Namespace ingress [icon: namespace, color: blue] {
+    HAProxy A [icon: load-balancer, color: blue]
+    Kong A [icon: api-gateway, color: blue]
+  }
+  Namespace mqtt [icon: namespace, color: blue] {
+    EMQX Node 1 [icon: mqtt, color: blue]
+  }
+  Namespace services [icon: namespace, color: blue] {
+    svc-auth [icon: lock, color: blue]
+    svc-ingestion-camions [icon: ingest, color: blue]
+    svc-tracking [icon: map, color: blue]
+  }
+  Namespace data [icon: namespace, color: blue] {
+    PostgreSQL Primary [icon: postgres, color: blue]
+    TimescaleDB Primary [icon: timescaledb, color: blue]
+    Redis Master [icon: redis, color: blue]
+    Kafka Broker 1 [icon: kafka, color: blue]
+  }
+}
+
+# ─── ZONE B ────────────────────────────────────────────────────────
+Zone B - Secondaire [icon: region, color: purple] {
+  Namespace ingress [icon: namespace, color: purple] {
+    HAProxy B [icon: load-balancer, color: purple]
+    Kong B [icon: api-gateway, color: purple]
+  }
+  Namespace mqtt [icon: namespace, color: purple] {
+    EMQX Node 2 [icon: mqtt, color: purple]
+  }
+  Namespace services [icon: namespace, color: purple] {
+    svc-rapprochement [icon: merge, color: purple]
+    svc-alertes [icon: alert, color: purple]
+    svc-rapports [icon: report, color: purple]
+  }
+  Namespace data [icon: namespace, color: purple] {
+    PostgreSQL Replica [icon: postgres, color: purple]
+    TimescaleDB Replica [icon: timescaledb, color: purple]
+    Redis Replica [icon: redis, color: purple]
+    Kafka Broker 2 [icon: kafka, color: purple]
+  }
+}
+
+# ─── ZONE C ────────────────────────────────────────────────────────
+Zone C - Tertiaire [icon: region, color: orange] {
+  Namespace ingress [icon: namespace, color: orange] {
+    HAProxy C [icon: load-balancer, color: orange]
+    Kong C [icon: api-gateway, color: orange]
+  }
+  Namespace mqtt [icon: namespace, color: orange] {
+    EMQX Node 3 [icon: mqtt, color: orange]
+  }
+  Namespace services [icon: namespace, color: orange] {
+    svc-ingestion-bouteilles [icon: ingest, color: orange]
+    svc-admin [icon: settings, color: orange]
+  }
+  Namespace data [icon: namespace, color: orange] {
+    PostgreSQL Replica [icon: postgres, color: orange]
+    Kafka Broker 3 [icon: kafka, color: orange]
+    MinIO S3 [icon: s3, color: orange]
+  }
+}
+
+# ─── FLUX TRAVERSANTS ─────────────────────────────────────────────
+Cloudflare WAF > HAProxy A, HAProxy B, HAProxy C: anycast [color: gray]
+Cloudflare WAF > CDN Statique: cache statique [color: gray]
+
+# EMQX Raft replication
+EMQX Node 1 < EMQX Node 2: Raft [color: blue, connection: <>]
+EMQX Node 2 < EMQX Node 3: Raft [color: blue, connection: <>]
+EMQX Node 3 < EMQX Node 1: Raft [color: blue, connection: <>]
+
+# Kafka replication
+Kafka Broker 1 < Kafka Broker 2: RF=3 [color: blue, connection: <>]
+Kafka Broker 2 < Kafka Broker 3: RF=3 [color: blue, connection: <>]
+Kafka Broker 3 < Kafka Broker 1: RF=3 [color: blue, connection: <>]
+
+# PostgreSQL replication (master → replica)
+PostgreSQL Primary > PostgreSQL Replica: streaming [color: green]
+PostgreSQL Replica > PostgreSQL Replica: cascading [color: green]
+
+# Redis replication
+Redis Master > Redis Replica: async [color: green]
+
+# ─── LEGEND ────────────────────────────────────────────────────────
+legend [position: bottom-right] {
+  [color: blue, label: Zone A (Primaire)]
+  [color: purple, label: Zone B (Secondaire)]
+  [color: orange, label: Zone C (Tertiaire)]
+  [color: gray, label: Edge (WAF/CDN)]
+  [connection: <>, label: Replication (Raft / RF=3)]
+  [connection: >, label: Streaming replication]
+  [icon: namespace, label: Namespace K8s]
+  [icon: postgres, label: StatefulSet]
+}
